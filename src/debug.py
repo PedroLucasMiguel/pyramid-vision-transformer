@@ -22,7 +22,7 @@ if __name__ == "__main__":
     input_batch = img.unsqueeze(0)
     input_batch = input_batch.to(DEVICE)
 
-    model = pvt_v2_b5()
+    model = pvt_v2_b5(2)
     model.to(DEVICE)
 
     print(model(input_batch).shape)

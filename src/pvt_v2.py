@@ -208,7 +208,7 @@ class Block(nn.Module):
         return x
     
 class PyramidVisionTransformerV2(nn.Module):
-    def __init__(self, img_size=224, patch_size=16, in_channels=3, num_classes=1000, embed_dims=[64, 128, 256, 512],
+    def __init__(self, in_channels=3, num_classes=1000, embed_dims=[64, 128, 256, 512],
                  num_heads=[1, 2, 4, 8], mlp_ratios=[4, 4, 4, 4], qkv_bias=False, qk_scale=None, drop_rate=0.,
                  attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
                  depths=[3, 4, 6, 3], sr_ratios=[8, 4, 2, 1], num_stages=4, linear=False):
@@ -227,6 +227,7 @@ class PyramidVisionTransformerV2(nn.Module):
             self.stages.append(nn.Sequential(
                 OrderedDict(
                     [
+                        # WHY THE PATCH SIZE IF FIXED AT 7???????????????????????
                         (f"patch_embed", OverlapPatchEmbed(patch_size=7 if i == 0 else 3,
                                                             stride=4 if i == 0 else 2,
                                                             in_channels=in_channels if i == 0 else embed_dims[i - 1],
@@ -287,10 +288,16 @@ class PyramidVisionTransformerV2(nn.Module):
 
         return x
     
-def pvt_v2_b5():
+def pvt_v2_b5(num_classes:int=1000):
 
-    model = PyramidVisionTransformerV2(
-        patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1, 2, 5, 8], mlp_ratios=[4, 4, 4, 4], qkv_bias=True,
-        norm_layer=partial(nn.LayerNorm, eps=1e-6), depths=[3, 6, 40, 3], sr_ratios=[8, 4, 2, 1], drop_path_rate=0.3)
+    model = PyramidVisionTransformerV2(embed_dims=[64, 128, 320, 512], 
+                                       num_heads=[1, 2, 5, 8], 
+                                       mlp_ratios=[4, 4, 4, 4], 
+                                       qkv_bias=True,
+                                       norm_layer=partial(nn.LayerNorm, eps=1e-6), 
+                                       depths=[3, 6, 40, 3], 
+                                       sr_ratios=[8, 4, 2, 1], 
+                                       drop_path_rate=0.3,
+                                       num_classes=num_classes)
 
     return model
