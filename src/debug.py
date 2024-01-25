@@ -22,7 +22,8 @@ if __name__ == "__main__":
     input_batch = img.unsqueeze(0)
     input_batch = input_batch.to(DEVICE)
 
-    model = pvt_v2_b5(2)
+    model = pvt_v2_b5(1000)
     model.to(DEVICE)
 
     print(model(input_batch).shape)
+    print('number of params:', sum(p.numel() for p in model.parameters() if p.requires_grad))
